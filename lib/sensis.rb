@@ -2,11 +2,21 @@ require 'rubygems'
 require 'json'
 require 'net/http'
 
+class Object 
+  def blank?
+    respond_to?(:empty?) ? empty? : !self
+  end
+end
+
 module Sensis
 
   def Sensis.config
     if @config.nil?
-      config_file = "#{::Rails.root}/config/sensis.yml"
+      begin
+        config_file = "#{::Rails.root}/config/sensis.yml"
+      rescue
+        config_file = ""
+      end
       if File.exists?(config_file)
         @config = YAML.load_file(config_file)
         @api_key = @config[::Rails.env]["api_key"]
