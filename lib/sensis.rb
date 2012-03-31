@@ -14,13 +14,13 @@ module Sensis
     if @config.nil?
       begin
         config_file = "#{::Rails.root}/config/sensis.yml"
+        if File.exists?(config_file)
+          @config = YAML.load_file(config_file)
+          @api_key = @config[::Rails.env]["api_key"]
+          @env    = @config[::Rails.env]["env"]
+        end
       rescue
         config_file = ""
-      end
-      if File.exists?(config_file)
-        @config = YAML.load_file(config_file)
-        @api_key = @config[::Rails.env]["api_key"]
-        @env    = @config[::Rails.env]["env"]
       end
     end
     return @config
@@ -129,7 +129,7 @@ module Sensis
         puts "Note: #{result["message"]}"
         return res
       else
-        raise "API returned error: #{res.message}, code: #{result.code}"
+        raise "API returned error: #{res.message}, code: #{result['code']}"
     end
   end
   
